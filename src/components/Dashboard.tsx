@@ -7,7 +7,18 @@ import { Card, Badge } from "./ui";
 export function Dashboard({ trip }: { trip: Trip }) {
   const balances = participantBalances(trip);
   const total = trip.expenses.reduce((s,e)=>s+e.amount,0);
-  const category = useMemo(()=>Object.entries(trip.expenses.reduce((m,e)=>{m[e.category]=(m[e.category]||0)+e.amount; return m as Record<string,number>},{})).map(([name,value])=>({name,value})),[trip]);
+  const category = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  trip.expenses.forEach((e) => {
+    totals[e.category] = (totals[e.category] ?? 0) + e.amount;
+  });
+
+  return Object.entries(totals).map(([name, value]) => ({
+    name,
+    value,
+  }));
+}, [trip]);
   const payer = [...balances].sort((a,b)=>b.paidDirect-a.paidDirect)[0];
   const byPayer = balances.map(b=>({name:trip.participants.find(p=>p.id===b.participantId)?.name ?? "", paid:b.paidDirect, share:b.share}));
   const daily = Object.entries(trip.expenses.reduce((m,e)=>{m[e.date]=(m[e.date]||0)+e.amount;return m as Record<string,number>},{})).sort(([a],[b])=>a.localeCompare(b)).map(([date,value])=>({date:date.slice(5),value}));
