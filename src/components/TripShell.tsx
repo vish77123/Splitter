@@ -12,6 +12,14 @@ type Tab="overview"|"expenses"|"settlements"|"people";
 
 export function TripShell() {
   const trip=useTrip();
+  export function TripShell() {
+  const trip = useTrip();
+
+  if (!trip) {
+    return null;
+  }
+
+  const ...
   const {dark,toggleDark,replaceTrip,updateTrip}=useTripStore();
   const [tab,setTab]=useState<Tab>("overview");
   const [peopleOpen,setPeopleOpen]=useState(false);
